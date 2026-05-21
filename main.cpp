@@ -1,20 +1,12 @@
-// =====================================================
-//   Simple To-Do List
-//   Programming Fundamentals - Final Project
-//   Salim Habib University
-// =====================================================
-
 #include <iostream> // cin, cout
 #include <fstream>  // file read/write
 #include <cstring>  // strcpy, strcmp, strlen
 using namespace std;
 
-// ─── CONSTANTS ──────────────────────────────────────
 const int MAX_TASKS = 100;            // Maximum number of tasks
 const char FILE_NAME[] = "tasks.txt"; // File to save tasks
 
-// ─── STRUCTURE ──────────────────────────────────────
-// A struct groups all the info about ONE task together
+// A struct groups all the info about one task together
 struct Task
 {
     int id;            // Task number (1, 2, 3...)
@@ -24,15 +16,11 @@ struct Task
     int completed;     // 0 = not done, 1 = done
 };
 
-// ─── GLOBAL VARIABLES ───────────────────────────────
 Task tasks[MAX_TASKS]; // Array of tasks
 int taskCount = 0;     // How many tasks we have right now
 int nextId = 1;        // Next available ID
 
-// =====================================================
-//   UDF: showMenu
-//   Displays the main menu options
-// =====================================================
+// Displays the main menu options
 void showMenu()
 {
     cout << "\n";
@@ -50,19 +38,13 @@ void showMenu()
     cout << "  Your choice: ";
 }
 
-// =====================================================
-//   UDF: printLine
-//   Prints a divider line (reusable helper)
-// =====================================================
+// Prints a divider line
 void printLine()
 {
     cout << "  --------------------------------\n";
 }
 
-// =====================================================
-//   UDF: addTask
-//   Asks user for task details and adds to array
-// =====================================================
+// Asks user for task details and adds to array
 void addTask()
 {
     // Check if array is full
@@ -76,7 +58,7 @@ void addTask()
 
     // Get task title from user
     cout << "  Task title : ";
-    cin.ignore(); // Clear leftover newline from cin
+    cin.ignore();
     cin.getline(tasks[taskCount].title, 100);
 
     // Get priority
@@ -114,7 +96,7 @@ void addTask()
 
     // Set the rest of the fields
     tasks[taskCount].id = nextId;
-    tasks[taskCount].completed = 0; // New task = not done
+    tasks[taskCount].completed = 0;
 
     // Move to next slot in array
     taskCount++;
@@ -123,10 +105,7 @@ void addTask()
     cout << "\n  [+] Task added successfully!\n";
 }
 
-// =====================================================
-//   UDF: displayOneTask
-//   Prints a single task's details nicely
-// =====================================================
+// Prints one task
 void displayOneTask(int index)
 {
     // Pick a symbol based on completion
@@ -142,10 +121,7 @@ void displayOneTask(int index)
          << "   |   Category: " << tasks[index].category << "\n";
 }
 
-// =====================================================
-//   UDF: viewAllTasks
-//   Shows every task in the array
-// =====================================================
+// Shows every task in the array
 void viewAllTasks()
 {
     cout << "\n  --- ALL TASKS ---\n";
@@ -168,20 +144,17 @@ void viewAllTasks()
     cout << "  Total: " << taskCount << " task(s)\n";
 }
 
-// =====================================================
-//   UDF: viewPendingTasks
-//   Shows only tasks that are NOT done yet
-// =====================================================
+// Shows only tasks that are not done yet
 void viewPendingTasks()
 {
     cout << "\n  --- PENDING TASKS ---\n";
     printLine();
 
-    int count = 0; // Count how many pending tasks we find
+    int count = 0;
 
     for (int i = 0; i < taskCount; i++)
     {
-        // Only show if NOT completed
+        // Only show if not completed
         if (tasks[i].completed == 0)
         {
             displayOneTask(i);
@@ -196,10 +169,7 @@ void viewPendingTasks()
         cout << "  Pending: " << count << " task(s)\n";
 }
 
-// =====================================================
-//   UDF: viewCompletedTasks
-//   Shows only tasks that ARE done
-// =====================================================
+// Shows only completed tasks
 void viewCompletedTasks()
 {
     cout << "\n  --- COMPLETED TASKS ---\n";
@@ -223,10 +193,7 @@ void viewCompletedTasks()
         cout << "  Completed: " << count << " task(s)\n";
 }
 
-// =====================================================
-//   UDF: markDone
-//   Finds a task by ID and marks it as completed
-// =====================================================
+// Finds a task by ID and marks it as completed
 void markDone()
 {
     if (taskCount == 0)
@@ -235,7 +202,7 @@ void markDone()
         return;
     }
 
-    viewAllTasks(); // Show tasks so user can pick one
+    viewAllTasks();
 
     int id;
     cout << "\n  Enter task ID to mark as done: ";
@@ -255,18 +222,14 @@ void markDone()
                 tasks[i].completed = 1;
                 cout << "\n  [+] Task #" << id << " marked as done!\n";
             }
-            return; // Stop searching once found
+            return;
         }
     }
 
-    // If we get here, ID was not found
     cout << "\n  [!] Task with ID " << id << " not found.\n";
 }
 
-// =====================================================
-//   UDF: deleteTask
-//   Removes a task from the array by shifting elements
-// =====================================================
+// Removes a task from the array by shifting elements
 void deleteTask()
 {
     if (taskCount == 0)
@@ -282,13 +245,13 @@ void deleteTask()
     cin >> id;
 
     // Find the task position
-    int position = -1; // -1 means not found yet
+    int position = -1;
     for (int i = 0; i < taskCount; i++)
     {
         if (tasks[i].id == id)
         {
             position = i;
-            break; // Stop loop once found
+            break;
         }
     }
 
@@ -298,25 +261,20 @@ void deleteTask()
         return;
     }
 
-    // Shift all tasks after this one, one position left
-    // This "fills the gap" left by the deleted task
+    // Shift all tasks after this one one position left
     for (int i = position; i < taskCount - 1; i++)
     {
         tasks[i] = tasks[i + 1];
     }
 
-    taskCount--; // One fewer task now
+    taskCount--;
     cout << "\n  [-] Task #" << id << " deleted.\n";
 }
 
-// =====================================================
-//   UDF: saveToFile
-//   Writes all tasks to tasks.txt
-//   Format: id,title,priority,category,completed
-// =====================================================
+// Writes all tasks to tasks.txt
 void saveToFile()
 {
-    ofstream file(FILE_NAME); // Open file for writing
+    ofstream file(FILE_NAME);
 
     if (!file)
     {
@@ -338,47 +296,42 @@ void saveToFile()
              << tasks[i].completed << "\n";
     }
 
-    file.close(); // Always close the file!
+    file.close();
 }
 
-// =====================================================
-//   UDF: loadFromFile
-//   Reads tasks from tasks.txt when program starts
-// =====================================================
+// Reads tasks from tasks.txt when the program starts
 void loadFromFile()
 {
-    ifstream file(FILE_NAME); // Open file for reading
+    ifstream file(FILE_NAME);
 
     if (!file)
     {
-        // File doesn't exist yet — that's okay!
         return;
     }
 
     // Read nextId and taskCount from first two lines
     file >> nextId;
     file >> taskCount;
-    file.ignore(); // Skip the newline after taskCount
+    file.ignore();
 
     // Read each task line by line
     for (int i = 0; i < taskCount; i++)
     {
         char line[200];
-        file.getline(line, 200); // Read full line
+        file.getline(line, 200);
 
-        // Parse the line: split by '|' manually
-        // We use a position pointer to walk through the string
+        // Parse the line by splitting on '|'
         int len = strlen(line);
-        int field = 0; // Which field we're filling (0=id, 1=title...)
+        int field = 0;
         char buffer[100];
         int bufIdx = 0;
 
         for (int j = 0; j <= len; j++)
         {
-            // When we hit '|' or end of string, save the buffer to a field
+            // When we hit '|' or end of string, save the current field
             if (line[j] == '|' || line[j] == '\0')
             {
-                buffer[bufIdx] = '\0'; // Null-terminate our buffer
+                buffer[bufIdx] = '\0';
 
                 if (field == 0)
                     tasks[i].id = atoi(buffer);
@@ -392,7 +345,7 @@ void loadFromFile()
                     tasks[i].completed = atoi(buffer);
 
                 field++;
-                bufIdx = 0; // Reset buffer for next field
+                bufIdx = 0;
             }
             else
             {
@@ -407,32 +360,28 @@ void loadFromFile()
         cout << "  [+] Loaded " << taskCount << " saved task(s).\n";
 }
 
-// =====================================================
-//   MAIN FUNCTION
-//   The program starts here. Shows menu in a loop.
-// =====================================================
+// The program starts here and shows the menu in a loop
 int main()
 {
     cout << "\n  Welcome to Simple To-Do List!\n";
-    cout << "  Salim Habib University — PF Final Project\n";
+    cout << "  Salim Habib University - PF Final Project\n";
 
     // Load any previously saved tasks
     loadFromFile();
 
     int choice;
 
-    // Keep showing the menu until user chooses 0 (exit)
+    // Keep showing the menu until user chooses 0
     do
     {
         showMenu();
         cin >> choice;
 
-        // Use switch to call the right function
         switch (choice)
         {
         case 1:
             addTask();
-            saveToFile(); // Save after every change
+            saveToFile();
             break;
 
         case 2:
@@ -465,7 +414,7 @@ int main()
             cout << "\n  [!] Invalid choice. Enter 0-6.\n";
         }
 
-    } while (choice != 0); // Loop until user exits
+    } while (choice != 0);
 
     return 0;
 }
